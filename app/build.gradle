@@ -11,7 +11,17 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         externalNativeBuild {
             cmake {
-                cppFlags ""
+                arguments "-DANDROID_TOOLCHAIN=clang",
+                        "-DANDROID_ARM_MODE=arm",
+                        "-DANDROID_ARM_NEON=TRUE",
+                        "-DANDROID_STL=c++_shared",
+                        "-DANDROID_CPP_FEATURES=rtti exceptions"
+
+                cFlags "-D_EXAMPLE_C_FLAG1", "-D_EXAMPLE_C_FLAG2"
+
+                cppFlags "-Wno-missing-declarations -Wno-macro-redefined -Wno-writable-strings -Wno-backslash-newline-escape",
+                        "-std=c++11 ",
+                        "-O0"
             }
         }
     }
@@ -21,10 +31,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    sourceSets {
+        main {
+            // let gradle pack the shared library into apk
+            jniLibs.srcDirs = ['libs']
+        }
+    }
     externalNativeBuild {
         cmake {
             path "CMakeLists.txt"
         }
+    }
+    dataBinding{
+        enabled true
     }
 }
 
